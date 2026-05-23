@@ -66,8 +66,14 @@ const TaskItem = React.memo(
             ? "bg-apple-green/5 border-apple-green/20"
             : task.isActive
               ? "bg-apple-blue/5 border-apple-blue/30 shadow-lg shadow-apple-blue/5"
-              : "bg-[#1c1c1e]/40 border-white/5 hover:border-zinc-700"
+              : "backdrop-blur-xl border border-white/5 hover:border-zinc-700"
         }`}
+        style={{
+          backgroundColor:
+            !task.done && !task.isActive ? "var(--glass-bg)" : undefined,
+          borderColor:
+            !task.done && !task.isActive ? "var(--border-color)" : undefined,
+        }}
       >
         <div
           onClick={() => onToggle(task.id)}
@@ -1065,16 +1071,22 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
   }, [keepNotes, keepNotesSearch]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden relative bg-black">
+    <div className="flex flex-col h-full overflow-hidden relative">
       {/* LEFT COLUMN: STATS, TIMELINE, GOOGLE WORKSPACE SYSTEM INTEGRATION CENTER */}
       <div className="flex-1 space-y-6 overflow-y-auto pr-2 pb-32 custom-scrollbar">
-        <h3 className="text-[15px] font-bold tracking-tight text-white flex items-center gap-2 sticky top-0 bg-black/90 backdrop-blur-xl py-3 z-10">
+        <h3 className="text-[15px] font-bold tracking-tight flex items-center gap-2 sticky top-0 backdrop-blur-xl py-3 z-10" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--glass-bg)' }}>
           <i className="fas fa-map-marked-alt text-apple-blue"></i>
           宏观进化航线：{plan.goal}
         </h3>
 
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-[#1c1c1e] border border-white/5 p-4 rounded-xl text-center shadow">
+          <div
+            className="backdrop-blur-xl border p-4 rounded-xl text-center shadow"
+            style={{
+              backgroundColor: "var(--glass-bg)",
+              borderColor: "var(--border-color)",
+            }}
+          >
             <div className="text-[9px] text-zinc-500 font-extrabold tracking-wider mb-1 uppercase">
               预测分配
             </div>
@@ -1082,7 +1094,13 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
               {stats.totalUnits}
             </div>
           </div>
-          <div className="bg-[#1c1c1e] border border-white/5 p-4 rounded-xl text-center shadow">
+          <div
+            className="backdrop-blur-xl border p-4 rounded-xl text-center shadow"
+            style={{
+              backgroundColor: "var(--glass-bg)",
+              borderColor: "var(--border-color)",
+            }}
+          >
             <div className="text-[9px] text-zinc-500 font-extrabold tracking-wider mb-1 uppercase">
               已达单位
             </div>
@@ -1090,7 +1108,13 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
               {stats.completedUnits}
             </div>
           </div>
-          <div className="bg-[#1c1c1e] border border-white/5 p-4 rounded-xl text-center shadow">
+          <div
+            className="backdrop-blur-xl border p-4 rounded-xl text-center shadow"
+            style={{
+              backgroundColor: "var(--glass-bg)",
+              borderColor: "var(--border-color)",
+            }}
+          >
             <div className="text-[9px] text-zinc-500 font-extrabold tracking-wider mb-1 uppercase">
               计入时数
             </div>
@@ -1102,10 +1126,19 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
         </div>
 
         {/* INTEGRATED OFFICE SUITE CONTAINER */}
-        <div className="bg-[#1c1c1e] border border-white/5 rounded-2xl p-5 shadow-2xl relative overflow-hidden transition-all duration-300">
+        <div
+          className="backdrop-blur-xl border rounded-2xl p-5 shadow-2xl relative overflow-hidden transition-all duration-300"
+          style={{
+            backgroundColor: "var(--glass-bg)",
+            borderColor: "var(--border-color)",
+          }}
+        >
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h4 className="text-xs font-bold text-white flex items-center gap-1.5 uppercase tracking-wide">
+              <h4
+                className="text-xs font-bold flex items-center gap-1.5 uppercase tracking-wide"
+                style={{ color: "var(--text-primary)" }}
+              >
                 <i className="fas fa-network-wired text-apple-blue text-xs"></i>
                 Google Workspace 智能全栈
               </h4>
@@ -2031,13 +2064,20 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
 
       {/* RIGHT COLUMN / DRAWER: DAILY CHECKLIST, POMODORO TIMER, REWARD BAR */}
       <div
-        className={`absolute bottom-0 left-0 right-0 bg-[#161617]/95 border-t border-white/10 rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] backdrop-blur-2xl transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col z-50 ${isTasksCollapsed ? "h-[72px]" : "h-[85vh]"}`}
+        className={`absolute bottom-0 left-0 right-0 border-t border-white/10 rounded-t-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] backdrop-blur-2xl transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] flex flex-col z-50 ${isTasksCollapsed ? "h-[72px]" : "h-[85vh]"}`}
+        style={{
+          backgroundColor: "var(--drawer-bg)",
+          borderColor: "var(--border-color)",
+        }}
       >
         <div
           className="px-6 md:px-10 h-[72px] flex items-center justify-between cursor-pointer group shrink-0"
           onClick={() => setIsTasksCollapsed(!isTasksCollapsed)}
         >
-          <h3 className="text-[15px] font-bold tracking-tight text-white flex items-center gap-3">
+          <h3
+            className="text-[15px] font-bold tracking-tight flex items-center gap-3"
+            style={{ color: "var(--text-primary)" }}
+          >
             <div className="w-8 h-8 rounded-full bg-apple-yellow/10 flex items-center justify-center text-apple-yellow">
               <i className="fas fa-bolt text-sm"></i>
             </div>
