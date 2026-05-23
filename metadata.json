@@ -1,0 +1,10 @@
+{
+  "name": "SILI - 超级智能学习个体",
+  "description": "一个由 AI 驱动的游戏化学习生态系统，专为专注力管理、多巴胺反馈驱动的知识管理和适应性测试而设计。",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
