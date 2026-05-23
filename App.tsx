@@ -221,8 +221,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#000000] text-gray-100 overflow-hidden font-sans select-none">
-      <nav className={`${isSidebarCollapsed ? 'w-16' : 'w-16 md:w-64'} flex flex-col bg-[#161617]/95 border-r border-white/5 z-30 transition-all duration-300`}>
+    <div 
+      className="flex h-screen overflow-hidden font-sans select-none transition-colors duration-300"
+      style={{ backgroundColor: 'var(--bg-app)', color: 'var(--text-primary)' }}
+    >
+      <nav className={`${isSidebarCollapsed ? 'w-16' : 'w-16 md:w-64'} flex flex-col border-r z-30 transition-all duration-300`} style={{ backgroundColor: 'var(--bg-nav)', borderColor: 'var(--border-color)' }}>
         <div className="p-4 md:p-6 mb-4 flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 bg-gradient-to-b from-[#1c1c1e] to-black border border-white/10 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0 shadow-lg">s</div>
@@ -355,9 +358,9 @@ const App: React.FC = () => {
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-4">
-                  <i className="fas fa-calendar-check text-4xl text-zinc-600"></i>
-                  <h2 className="text-xl font-bold text-zinc-300">还没有制定智能进化方案</h2>
-                  <p className="text-zinc-500 text-sm">请先在【控制台】输入目标，让 SILI 为你生成专属的学习排期和宏观路线图。</p>
+                  <i className="fas fa-calendar-check text-4xl" style={{ color: 'var(--text-muted)' }}></i>
+                  <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>还没有制定智能进化方案</h2>
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>请先在【控制台】输入目标，让 SILI 为你生成专属的学习排期和宏观路线图。</p>
                   <button onClick={() => setView(AppView.DASHBOARD)} className="mt-4 px-6 py-2 bg-apple-blue text-white font-bold text-sm rounded-xl hover:bg-blue-600 transition">
                     去控制台生成
                   </button>
