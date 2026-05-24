@@ -272,6 +272,14 @@ const App: React.FC = () => {
     }
   };
 
+  const isFullViewportView =
+    view === AppView.EDITOR ||
+    view === AppView.LLM_WIKI ||
+    view === AppView.GRAPH ||
+    view === AppView.PLANS ||
+    view === AppView.LIBRARY ||
+    view === AppView.REVIEW;
+
   return (
     <div
       className="flex h-screen overflow-hidden font-sans select-none transition-colors duration-300 relative"
@@ -380,32 +388,41 @@ const App: React.FC = () => {
       </nav>
 
       <main className="flex-1 overflow-hidden flex flex-col relative bg-transparent">
-        <header className="h-16 flex items-center justify-between px-8 border-b backdrop-blur-xl z-20" style={{ backgroundColor: 'var(--glass-bg)', borderColor: 'var(--border-color)' }}>
-          <h2 className="text-xs font-medium text-zinc-400 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-apple-blue shadow-[0_0_8px_rgba(10,132,255,0.8)] animate-pulse"></span>
+        <header
+          className="h-11 flex items-center justify-between px-6 border-b backdrop-blur-xl z-20"
+          style={{
+            backgroundColor: "var(--glass-bg)",
+            borderColor: "var(--border-color)",
+          }}
+        >
+          <h2 className="text-[11px] font-medium text-zinc-450 flex items-center gap-2 tracking-wide font-sans">
+            <span className="w-1.5 h-1.5 rounded-full bg-apple-blue shadow-[0_0_8px_rgba(10,132,255,0.8)] animate-pulse shrink-0"></span>
             {view === AppView.DASHBOARD && "欢迎回来，开始进化"}
-            {view === AppView.LIBRARY && "知识库管理中心"}
-            {view === AppView.EDITOR && `正在编辑：${activeNote.title}`}
-            {view === AppView.REVIEW && "记忆库：正在强化大脑连接"}
+            {view === AppView.PLANS && "进化航线与日程流协同方案"}
+            {view === AppView.LIBRARY && "本地知识脑图谱管理中心"}
+            {view === AppView.EDITOR && `正在自主知识脑图构建：${activeNote?.title || "未命名便签"}`}
+            {view === AppView.REVIEW && "科学记忆强化：强化连接层"}
+            {view === AppView.GRAPH && "自主智能脑图谱全景三维投射"}
+            {view === AppView.LLM_WIKI && "大模型 RAG 智能百科全书"}
           </h2>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <button
               id="theme-toggle-btn"
               onClick={() => setIsLightMode(!isLightMode)}
-              className="w-8 h-8 rounded-full flex items-center justify-center transition-all bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5 active:scale-95"
+              className="w-7 h-7 rounded-full flex items-center justify-center transition-all bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white border border-white/5 active:scale-95 shrink-0"
               title={isLightMode ? "切换为暗色模式" : "切换为浅色模式"}
             >
               <i
-                className={`fas ${isLightMode ? "fa-moon" : "fa-sun"} text-[11px]`}
+                className={`fas ${isLightMode ? "fa-moon" : "fa-sun"} text-[10px]`}
               ></i>
             </button>
-            <div className="text-[#ff9f0a] font-bold text-[10px] tracking-widest flex items-center gap-1.5 bg-[#ff9f0a]/10 px-3 py-1.5 rounded-full border border-[#ff9f0a]/15 shadow-sm">
-              <i className="fas fa-fire text-xs"></i> {stats.streak} DAYS STREAK
+            <div className="text-[#ff9f0a] font-bold text-[9px] tracking-widest flex items-center gap-1 bg-[#ff9f0a]/10 px-2.5 py-1 rounded-full border border-[#ff9f0a]/15 shadow-sm shrink-0">
+              <i className="fas fa-fire text-[10px]"></i> {stats.streak} DAYS STREAK
             </div>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+        <div className={`flex-1 ${isFullViewportView ? "overflow-hidden h-full p-0" : "overflow-y-auto p-6"} scroll-smooth`}>
           {view === AppView.DASHBOARD && (
             <div className="max-w-7xl mx-auto space-y-8">
               <section
@@ -454,7 +471,7 @@ const App: React.FC = () => {
           )}
 
           {view === AppView.PLANS && (
-            <div className="max-w-7xl mx-auto h-full">
+            <div className="max-w-7xl mx-auto h-full p-6 pb-0">
               {plans.length > 0 ? (
                 <LearningPlanView
                   plan={plans[0]}
@@ -498,24 +515,26 @@ const App: React.FC = () => {
           )}
 
           {view === AppView.LIBRARY && (
-            <KnowledgeLibrary
-              notes={notes}
-              cards={cards}
-              onDeleteNote={(id) =>
-                setNotes((prev) => prev.filter((n) => n.id !== id))
-              }
-              onDeleteCard={(id) =>
-                setCards((prev) => prev.filter((c) => c.id !== id))
-              }
-              onSelectNote={(id) => {
-                setActiveNoteId(id);
-                setView(AppView.EDITOR);
-              }}
-            />
+            <div className="h-full px-6 py-2">
+              <KnowledgeLibrary
+                notes={notes}
+                cards={cards}
+                onDeleteNote={(id) =>
+                  setNotes((prev) => prev.filter((n) => n.id !== id))
+                }
+                onDeleteCard={(id) =>
+                  setCards((prev) => prev.filter((c) => c.id !== id))
+                }
+                onSelectNote={(id) => {
+                  setActiveNoteId(id);
+                  setView(AppView.EDITOR);
+                }}
+              />
+            </div>
           )}
 
           {view === AppView.EDITOR && (
-            <div className="h-[calc(100vh-160px)] flex gap-6">
+            <div className="h-full flex gap-6 p-6">
               <div className="flex-1">
                 <Editor
                   note={activeNote}
@@ -565,31 +584,33 @@ const App: React.FC = () => {
           )}
 
           {view === AppView.REVIEW && (
-            <FlashcardView
-              cards={cards.filter((c) => c.nextReview <= Date.now())}
-              onReview={(id, ok) => {
-                setCards((prev) =>
-                  prev.map((c) => {
-                    if (c.id === id) {
-                      const nl = ok ? Math.min(5, c.level + 1) : 0;
-                      return {
-                        ...c,
-                        level: nl,
-                        nextReview: Date.now() + (nl || 1) * 86400000,
-                      };
-                    }
-                    return c;
-                  }),
-                );
-                if (ok) setStats((s) => ({ ...s, xp: s.xp + 10 }));
-              }}
-              onSpeak={speakSweetly}
-              onNavigateToSource={(id) => {
-                setActiveNoteId(id);
-                setView(AppView.EDITOR);
-              }}
-              onClose={() => setView(AppView.DASHBOARD)}
-            />
+            <div className="h-full p-6">
+              <FlashcardView
+                cards={cards.filter((c) => c.nextReview <= Date.now())}
+                onReview={(id, ok) => {
+                  setCards((prev) =>
+                    prev.map((c) => {
+                      if (c.id === id) {
+                        const nl = ok ? Math.min(5, c.level + 1) : 0;
+                        return {
+                          ...c,
+                          level: nl,
+                          nextReview: Date.now() + (nl || 1) * 86400000,
+                        };
+                      }
+                      return c;
+                    }),
+                  );
+                  if (ok) setStats((s) => ({ ...s, xp: s.xp + 10 }));
+                }}
+                onSpeak={speakSweetly}
+                onNavigateToSource={(id) => {
+                  setActiveNoteId(id);
+                  setView(AppView.EDITOR);
+                }}
+                onClose={() => setView(AppView.DASHBOARD)}
+              />
+            </div>
           )}
 
           {view === AppView.DEMO && (
@@ -616,7 +637,7 @@ const App: React.FC = () => {
           {view === AppView.GRAPH && (
             <KnowledgeGraph notes={notes} cards={cards} />
           )}
-          {view === AppView.LLM_WIKI && <LLMWiki />}
+          {view === AppView.LLM_WIKI && <LLMWiki notes={notes} />}
         </div>
       </main>
 

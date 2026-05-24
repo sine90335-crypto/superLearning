@@ -2,20 +2,28 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, User, Auth } from 'firebase/auth';
 import firebaseConfig from './firebase-applet-config.json';
 
-// Initialize Firebase App
-const app = initializeApp(firebaseConfig);
-export const auth: Auth = getAuth(app);
+// Initialize Firebase App defensively
+let app: any = null;
+export let auth: Auth | null = null;
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+} catch (err) {
+  console.error('Firebase initialization failed (likely running offline):', err);
+}
 
-const provider = new GoogleAuthProvider();
-// Add required scopes
-provider.addScope('https://www.googleapis.com/auth/tasks');
-provider.addScope('https://www.googleapis.com/auth/calendar');
-provider.addScope('https://www.googleapis.com/auth/chat.spaces.readonly');
-provider.addScope('https://www.googleapis.com/auth/chat.messages');
-provider.addScope('https://www.googleapis.com/auth/documents');
-provider.addScope('https://www.googleapis.com/auth/spreadsheets');
-provider.addScope('https://www.googleapis.com/auth/forms.body');
-provider.addScope('https://www.googleapis.com/auth/forms.responses.readonly');
+const provider = auth ? new GoogleAuthProvider() : null;
+if (provider) {
+  // Add required scopes
+  provider.addScope('https://www.googleapis.com/auth/tasks');
+  provider.addScope('https://www.googleapis.com/auth/calendar');
+  provider.addScope('https://www.googleapis.com/auth/chat.spaces.readonly');
+  provider.addScope('https://www.googleapis.com/auth/chat.messages');
+  provider.addScope('https://www.googleapis.com/auth/documents');
+  provider.addScope('https://www.googleapis.com/auth/spreadsheets');
+  provider.addScope('https://www.googleapis.com/auth/forms.body');
+  provider.addScope('https://www.googleapis.com/auth/forms.responses.readonly');
+}
 
 // In-memory token cache
 let cachedAccessToken: string | null = null;
@@ -26,13 +34,12 @@ export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
 ) => {
+  if (!auth) {
+    if (onAuthFailure) onAuthFailure();
+    return () => {}; // return clean dummy unsubscribe function for offline
+  }
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
-      // If we don't have token but user is logged in, we might need to prompt login or get it.
-      // Firebase doesn't persist the Google access token in the session storage.
-      // So if the page is refreshed, cachedAccessToken is null.
-      // In this case, we have a logged-in user but no access token.
-      // We will ask them to sign in again to retrieve the access token when they try to use Tasks.
       if (cachedAccessToken) {
         if (onAuthSuccess) onAuthSuccess(user, cachedAccessToken);
       } else {
@@ -45,8 +52,11 @@ export const initAuth = (
   });
 };
 
-// Google Sign-In popup
+// Google Sign-In popup with safety check
 export const googleSignIn = async (): Promise<{ user: User; accessToken: string } | null> => {
+  if (!auth || !provider) {
+    throw new Error('Authentication is currently offline or unavailable. Check internet connection.');
+  }
   try {
     isSigningIn = true;
     const result = await signInWithPopup(auth, provider);
@@ -73,7 +83,9 @@ export const setAccessToken = (token: string | null) => {
 };
 
 export const googleSignOut = async (): Promise<void> => {
-  await auth.signOut();
+  if (auth) {
+    await auth.signOut();
+  }
   cachedAccessToken = null;
 };
 

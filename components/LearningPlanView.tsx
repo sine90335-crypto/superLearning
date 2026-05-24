@@ -1140,10 +1140,10 @@ export const LearningPlanView: React.FC<LearningPlanViewProps> = ({
                 style={{ color: "var(--text-primary)" }}
               >
                 <i className="fas fa-network-wired text-apple-blue text-xs"></i>
-                Google Workspace 智能全栈
+                Google Workspace 智能全栈 (可选云端功能)
               </h4>
               <p className="text-[10px] text-zinc-500 mt-0.5">
-                多驱协同：管理 Tasks/日历/Docs文库/Sheets表格/Forms表单与知识板
+                可选协同扩展：您可以授权云同步，也可以完全离线使用本地记忆库与方案。
               </p>
             </div>
             {user && (
